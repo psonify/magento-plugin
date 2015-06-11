@@ -1,0 +1,239 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    Phoenix
+ * @package     Psonify_Api
+ * @copyright   Copyright (c) 2014 Phoenix Medien GmbH & Co. KG (http://www.phoenix-medien.de)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <modules>
+        <Psonify_Api>
+            <version>1.0.3</version>
+        </Psonify_Api>
+    </modules>
+    <global>
+        <models>
+            <api>
+                <class>Psonify_Api_Model</class>
+                <resourceModel>api_mysql4</resourceModel>
+            </api>
+            <!-- model vs db table relation -->
+            <api_mysql4>
+                <class>Psonify_Api_Model_Mysql4</class>
+                <!-- db table with name test -->
+                <entities>
+                    <psonifycart>
+                        <table>psonify_cart</table>
+                    </psonifycart>
+                    <psonifycartitem>
+                        <table>psonify_cart_item</table>
+                    </psonifycartitem>
+                </entities>
+            </api_mysql4>
+        </models>
+        <!-- Setup resources-->
+        <resources>
+            <psonify_setup>
+                <setup>
+                    <module>Psonify_Api</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </psonify_setup>
+            <api_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </api_write>
+            <api_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </api_read>
+        </resources>
+        <template>
+            <email>
+                <abandoned_cart_template module="api">
+                    <label>Abandoned cart email template</label>
+                    <file>abandoned_cart_email.html</file>
+                    <type>html</type>
+                </abandoned_cart_template>
+            </email>
+	</template>
+    </global> 
+    <frontend>
+        <routers>
+            <api>
+                <use>standard</use>
+                <args>
+                    <module>Psonify_Api</module>
+                    <frontName>psonify_api</frontName>
+                </args>
+            </api>
+        </routers>
+		
+        <events>
+            <!-- Hooking to Magento's default event "controller_action_predispatch" -->
+            <controller_action_predispatch>
+                <observers>
+                    <controller_action_before>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToControllerActionPreDispatch</method>
+                    </controller_action_before>
+                </observers>
+            </controller_action_predispatch>
+            <!-- Hooking to Magento's default event "controller_action_postdispatch" -->
+            <controller_action_postdispatch>
+                <observers>
+                    <controller_action_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToControllerActionPostDispatch</method>
+                    </controller_action_after>
+                </observers>
+            </controller_action_postdispatch>
+            <!-- Hooking to our own event "add_to_cart_before" -->
+            <add_to_cart_before>
+                <observers>
+                    <add_to_cart_before>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToAddToCartBefore</method>
+                    </add_to_cart_before>
+                </observers>
+            </add_to_cart_before>
+			
+            <!-- Hooking to our own event "update_cart_after" -->
+            <update_cart_after>
+                <observers>
+                    <update_cart_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToUpdateCartAfter</method>
+                    </update_cart_after>
+                </observers>
+            </update_cart_after>
+			
+            <!-- Hooking to our own event "add_to_cart_after" -->
+            <add_to_cart_after>
+                <observers>
+                    <add_to_cart_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToAddToCartAfter</method>
+                    </add_to_cart_after>
+                </observers>
+            </add_to_cart_after>
+			
+            <sales_quote_remove_item>
+                <observers>
+                    <sales_quote_remove_item>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToRemoveFromCart</method>
+                    </sales_quote_remove_item>
+                </observers>
+            </sales_quote_remove_item>
+			
+            <search_after>
+                <observers>
+                    <search_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToSearchAfter</method>
+                    </search_after>
+                </observers>
+            </search_after>
+			
+            <save_payment_after>
+                <observers>
+                    <save_payment_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToSavePaymentAfter</method>
+                    </save_payment_after>
+                </observers>
+            </save_payment_after>
+			
+            <discount_code_after>
+                <observers>
+                    <discount_code_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToDiscountCodeAfter</method>
+                    </discount_code_after>
+                </observers>
+            </discount_code_after>
+			
+            <save_shipping_after>
+                <observers>
+                    <save_shipping_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToSaveShippingAfter</method>
+                    </save_shipping_after>
+                </observers>
+            </save_shipping_after>
+			
+            <save_billing_after>
+                <observers>
+                    <save_billing_after>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToSaveBillingAfter</method>
+                    </save_billing_after>
+                </observers>
+            </save_billing_after>
+			
+            <!-- <order_placed_before>
+                    <observers>
+                            <order_placed_before>
+                                <type>singleton</type>
+                                    <class>Psonify_Api_Model_Observer</class>
+                                    <method>hookToOrderPlacedBefore</method>
+                            </order_placed_before>
+                    </observers>
+            </order_placed_before> -->
+            <checkout_onepage_controller_success_action>
+                <observers>
+                    <ordercustomer>
+                        <type>singleton</type>
+                        <class>Psonify_Api_Model_Observer</class>
+                        <method>hookToOrderPlacedBefore</method>
+                    </ordercustomer>
+                </observers>
+            </checkout_onepage_controller_success_action>
+        </events>
+		
+    </frontend>
+    
+<!--    <crontab>
+        <jobs>
+            <psonify_api>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>api/observer::test</model>
+                </run>
+            </psonify_api>
+        </jobs>
+    </crontab>-->
+    
+</config>
