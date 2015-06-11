@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+         <modules>
+                <Psonify_Api>
+                        <active>true</active>
+                        <codePool>community</codePool>
+                </Psonify_Api>
+         </modules>
+</config>
