@@ -127,8 +127,8 @@ class Psonify_Api_Model_Observer
 		
 		
 		//var_dump($data);exit;
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/update',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/update',$data);
 	}
     
 	
@@ -179,8 +179,8 @@ class Psonify_Api_Model_Observer
 			}
 		}
 		
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/add', $data );
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/add', $data );
 	}
 	
 	/**
@@ -211,8 +211,8 @@ class Psonify_Api_Model_Observer
 			
 		}
 		
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/remove',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/remove',$data);
 	}
 	
 	/**
@@ -300,12 +300,16 @@ class Psonify_Api_Model_Observer
 	*/
 	
 	public function hookToSaveBillingAfter($observer){
+		
 		$request = $observer->getEvent()->getRequest()->getParams();
 		$address = $request['billing'];
 		$address['region'] = $address['region_id'] != '' ? $address['region_id'] : $address['region'];
 		$data = array(
 			"data" => array(
 				'address' => array(
+					'firstname'   => $address['firstname'],
+					'lastname'    => $address['lastname'],
+					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
@@ -335,6 +339,9 @@ class Psonify_Api_Model_Observer
 		$data = array(
 			"data" => array (
 				'address' => array(
+					'firstname'   => $address['firstname'],
+					'lastname'    => $address['lastname'],
+					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
