@@ -307,8 +307,8 @@ class Psonify_Api_Model_Observer
 			"data" => array(
 				'address' => array(
 					'firstname'   => $address['firstname'],
--					'lastname'    => $address['lastname'],
--					'email'       => $address['email'],
+					'lastname'    => $address['lastname'],
+					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
@@ -339,8 +339,8 @@ class Psonify_Api_Model_Observer
 			"data" => array (
 				'address' => array(
 					'firstname'   => $address['firstname'],
--					'lastname'    => $address['lastname'],
--					'email'       => $address['email'],
+					'lastname'    => $address['lastname'],
+					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
