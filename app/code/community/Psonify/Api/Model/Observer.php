@@ -127,8 +127,8 @@ class Psonify_Api_Model_Observer
 		
 		
 		//var_dump($data);exit;
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/update',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/update',$data);
 	}
     
 	
@@ -179,8 +179,8 @@ class Psonify_Api_Model_Observer
 			}
 		}
 		
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/add', $data );
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/add', $data );
 	}
 	
 	/**
@@ -211,8 +211,8 @@ class Psonify_Api_Model_Observer
 			
 		}
 		
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/remove',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/remove',$data);
 	}
 	
 	/**
@@ -500,7 +500,7 @@ class Psonify_Api_Model_Observer
 	
 	public function getApiUrl(){
 		// needs to fetched from admin settings in future
-		return "http://api.psonifydev.com";
+		return "http://api.psonify.com";
 		
 	}
         
