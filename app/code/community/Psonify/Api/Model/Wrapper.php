@@ -33,23 +33,6 @@ class Psonify_Api_Model_Wrapper {
 	*/
 	public function callApi( $endPoint , array $params )
 	{
-		// added for local testing
-		if($this->is_localhost()){
-			if(Mage::getSingleton("core/session")->getPsonifyDebug() == 'true')
-			{
-				echo "<br/><h1>End Point</h1><br/>";
-				echo $endPoint;
-				echo "<br/><h1>Sent Params</h1><br/>";
-				Zend_Debug::dump($params );
-				echo "<br/><h1>Recieved Result</h1><br/>";
-				Zend_Debug::dump('Running on local, hook worked! but api calls are prevented on local');
-				exit;
-			} else {
-				return array('message' => 'running on local');
-			}
-		}
-		
-		
 		/* check if end point is available prior to make request */
 		if(!in_array($endPoint,$this->endPoints))
 		{
@@ -99,14 +82,5 @@ class Psonify_Api_Model_Wrapper {
 			'code' => 0 ,
 			'data' => array( 'message' => $message ),
 		);
-	}
-
-	function is_localhost() {
-		$whitelist = array( '127.0.0.1', '::1' );
-		if( in_array( $_SERVER['REMOTE_ADDR'], $whitelist) ){
-			return true;
-		} else {
-			return false;
-		}
-	}
+	}	
 }

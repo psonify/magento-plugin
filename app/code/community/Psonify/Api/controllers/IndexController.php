@@ -163,17 +163,32 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action
 		if(!isset($arrRequest['token'])){
 			return false;
 		}
-	
+                $cartItems = Mage::getModel("checkout/session")->getQuote();
+                
+                $items = $cartItems->getAllVisibleItems();
+
+                if(count($items)){
+                    $this->_redirect('checkout/cart/index/flag/'.$arrRequest['token']);
+                    return false;
+                }
+                
+                
+                
+                $configFields = Mage::getStoreConfig('psonify/psonify_group');
+
+                Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+
 		Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
 		
 		
 		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest['token']);
+//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest['token']);
 		$arrPsonifyCartItem->getSelect()->join(
 			array('cart_item' => 'psonify_cart'),
 			'cart_item.id = main_table.psonify_cart_id',
 			'cart_item.token'
-		);
+		)
+                ->where("cart_item.token = '".$arrRequest['token']."'");
 		
 		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
 		
@@ -210,4 +225,105 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action
 		echo count($collection);exit;
 		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);	
 	}
+        
+        public function assigncartAction(){
+                $arrRequest = $this->getRequest()->getParams();
+			
+		if(!isset($arrRequest['token'])){
+			return false;
+		}
+               
+                
+                
+                
+                $configFields = Mage::getStoreConfig('psonify/psonify_group');
+
+                Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+
+		Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
+		
+		
+		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
+		$arrPsonifyCartItem->getSelect()->join(
+			array('cart_item' => 'psonify_cart'),
+			'cart_item.id = main_table.psonify_cart_id',
+			'cart_item.token'
+		)
+                ->where("cart_item.token = '".$arrRequest['token']."'");
+		
+		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
+		
+		foreach($arrPsonifyCartItemData as $row){
+                    //echo array_search($row['cart_item_id'], $arrRequest['abandonedItem']);
+                    
+                    if(array_search($row['cart_item_id'], $arrRequest['abandonedItem']) >= 0){
+                        
+			$objCartModel = Mage::getModel('checkout/cart');
+			$objCartModel->init();
+			$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
+			
+			if($productCollection->getTypeId() == 'simple'){
+				$_product = array( 'product_id' => $row['cart_item_id'], 'qty' => $row['qty']);
+			}elseif($productCollection->getTypeId() == 'configurable'){
+                            $serialize = unserialize($row['serialize_string']);
+				$_product = array( 
+									'product_id' => $row['cart_item_id'],
+									'qty' => $row['qty'],
+									'super_attribute' => $serialize['super_attribute']//array( $optionId => $optionValue)
+								);
+			}
+			$objCartModel->addProduct($productCollection, $_product);		
+			$objCartModel->save(); 
+                    }
+		}
+		$this->_redirect("checkout/cart");
+        }
+        
+        public function cartAction(){
+            $arrRequest = $this->getRequest()->getParam('token');
+            
+            if(!$arrRequest){
+                return false;
+            }
+            
+            $arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
+//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest);
+		$arrPsonifyCartItem->getSelect()->join(
+			array('cart_item' => 'psonify_cart'),
+			'cart_item.id = main_table.psonify_cart_id',
+			'cart_item.token'
+		)->where("cart_item.token = '".$arrRequest."'");
+		
+		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
+		$html = '<div class="fixed-table-container"><table id="table-style" data-height="400" data-row-style="rowStyle" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th data-field="name" class="col-md-6">
+                                    <div class="th-inner">Product Name</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th data-field="price" class="col-md-4">
+                                    <div class="th-inner">Qty</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th data-field="price" class="col-md-4">
+                                    <div class="th-inner"><input type="checkbox" id="selectAll"/></div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                            </tr>
+                            </thead><tbody>';
+		foreach($arrPsonifyCartItemData as $row){
+                    $serialize = unserialize($row['serialize_string']);
+                    $html .= '
+                                <tr>
+                                    <td> <a href="'.$serialize['url'].'">'.$serialize['attributes']['name'].'</a> </td>
+                                    <td> '.$serialize['qty'].' </td>
+                                    <td> <input type="checkbox" name="abandonedItem[]" value="'.$serialize['identifier']['value'].'" id="abandonedItem'.$serialize['identifier']['value'].'"/> </td>
+                                </tr>
+                            ';
+		}
+            $html .= '</tbody></table></div>';
+            echo $html;
+            return ;
+        }
 }
