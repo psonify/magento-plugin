@@ -43,6 +43,15 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </psonify_modal_title>
+                        <psonify_cron_email translate="label">
+                            <label>From Email: </label>
+                            <comment>From Email to send to customer with abandoned cart details.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </psonify_cron_email>
                         
                     </fields>
                 </psonify_group>

@@ -74,7 +74,7 @@
                     <type>html</type>
                 </abandoned_cart_template>
             </email>
-	</template>
+        </template>
     </global> 
     <frontend>
         
@@ -87,7 +87,7 @@
                 </args>
             </api>
         </routers>
-	<layout>
+        <layout>
             <updates>
                 <psonify module="api">
                     <file>psonify.xml</file>
@@ -234,31 +234,66 @@
         </events>
 		
     </frontend>
+    <admin>
+        <routers>
+            <psonify>
+                <use>admin</use>
+                <args>
+                    <module>Psonify_Api</module>
+                    <frontName>admin_psonify</frontName>
+                </args>
+            </psonify>
+        </routers>
+    </admin>
     <adminhtml>
-		<acl>
-			<resources>
-				<all>
-					<title>Allow Everything</title>
-				</all>
-				<admin>
-					<children>
-						<system>
-							<children>
-								<config>
-									<children>
-										<psonify>
-											<title>Psonify - All</title>
-										</psonify>
-									</children>
-								</config>
-							</children>
-						</system>
-					</children>
-				</admin>
-			</resources>
-		</acl>
-	</adminhtml>
-<!--    <crontab>
+        <menu>
+            <psonify module="api">
+                <title>Psonify</title>
+                <sort_order>130</sort_order>
+                <children>
+                    <psonify module="api">
+                        <title>Manage psonify</title>
+                        <sort_order>0</sort_order>
+                        <action>admin_psonify/adminhtml_psonify</action>
+                    </psonify>
+                </children>
+            </psonify>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <psonify>
+                                            <title>Psonify - All</title>
+                                        </psonify>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        
+       
+        <layout>
+            <updates>
+                <psonify_api>
+                    <file>psonify.xml</file>
+                </psonify_api>
+            </updates>
+        </layout>
+    
+        
+    </adminhtml>
+    <!--    <crontab>
         <jobs>
             <psonify_api>
                 <schedule>
