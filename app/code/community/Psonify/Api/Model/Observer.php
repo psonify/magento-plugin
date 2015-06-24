@@ -60,14 +60,7 @@ class Psonify_Api_Model_Observer {
 		}
 	}
 
-	/**
-	* hookToAddToCartBefore
-	* called by system on before add to cart event
-	* @retun NULL
-	*/
-	public function hookToAddToCartBefore($observer) {
-		Mage::log("Product ".$request['product']." will be added to cart.");
-	}
+	
 
 	/**
 	* hookToUpdateCartAfter
