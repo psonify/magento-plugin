@@ -23,7 +23,7 @@ CREATE TABLE `{$this->getTable('psonify_cart')}` (
 	`token` VARCHAR(50) NOT NULL,
 	PRIMARY KEY (`id`)
 )
-COLLATE='latin1_swedish_ci'
+COLLATE='UTF8'
 ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS {$this->getTable('psonify_cart_item')};
