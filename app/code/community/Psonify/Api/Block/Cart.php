@@ -1,19 +1,25 @@
 <?php
 
+/**
+ * 
+ */
+class Psonify_Api_Block_Cart extends Mage_Core_Block_Template {
 
-class Psonify_Api_Block_Cart extends Mage_Core_Block_Template
-{
+	/**
+	 * [__construct description]
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->setTemplate('psonify/abandonedCart.phtml');
+	}
 
-    protected function _construct()
-    {
-        parent::_construct();
-        $this->setTemplate('psonify/abandonedCart.phtml');
-    }
-
-    public function methodBlock()
-    {
-        return 'informations about my block !!';
-    }
+	/**
+	 * [methodBlock description]
+	 * @return [type] [description]
+	 */
+	public function methodBlock() {
+		return 'information about my block.';
+	}
 
 }
 
