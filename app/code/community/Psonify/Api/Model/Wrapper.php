@@ -52,7 +52,7 @@ class Psonify_Api_Model_Wrapper {
 				echo "<br/><h1>Sent Params</h1><br/>";
 				Zend_Debug::dump($params );
 				echo "<br/><h1>Received Result</h1><br/>";
-				Zend_Debug::Dump($this->getValidationErrorResponse('End point is not valid'));exit;
+				Zend_Debug::Dump($this->getValidationErrorResponse('End point is not valid'));
 			}
 			return $this->getValidationErrorResponse('End point is not valid');
 		} else {
