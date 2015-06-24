@@ -1,146 +1,155 @@
-<?php 
+<?php
 
-class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action
-{	
-	public function indexAction()
-	{
-		$this->env = 'dev'; // change this to 'prod' on production
-		
+/**
+ * 
+ */
+class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
+
+	public function indexAction() {
+
+		// change this to 'prod' on production
+		$env = 'dev';
+
 		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
+
+		$token	= $this->getRequest()->getParam('token');
+		$debug	= $this->getRequest()->getParam('debug');
 		$export = '';
-		if($this->env == 'dev'){
+
+		if('dev' == $env) {
 			$export =  $this->getRequest()->getParam('export');
 		} else {
 			$post = $this->getRequest()->getPost();
-			if(isset($post['export'])){
+			if(isset($post['export'])) {
 				$export = $post['export'];
 			}
 		}
-		// exporting count
-		if($export == 'products_count'){
+
+		if('products_count' == $export) {
+			// exporting count
 			$this->exportProductsCount();
 			return true;
-		}
-		
-		// exporting products
-		if($export == 'products'){
-			$this->exportProdcuts();
+		} else if('products' == $export) {
+			// exporting products
+			$this->exportProducts();
 			return true;
-		}
-		// Mage::getSingleton("core/session")->unsPsonifyToken();
-		$oldToken = Mage::getSingleton("core/session")->getPsonifyToken();
-		$token = $this->getRequest()->getParam('token');
-		$debug = $this->getRequest()->getParam('debug');
-		$objPsonifyCartModel = Mage::getModel('api/psonifycart');
-		if($debug != NULL)
-		{
-			Mage::getSingleton("core/session")->setPsonifyDebug($debug);
-			$response = array( 'status'   => 'success' , 
-			                   'message'  => "debug mode ".$debug,
-			);
-			$this->getResponse()->setBody(json_encode($response));
-		}
-		else
-		{
-			
-			if($token != NULL){
-				Mage::getSingleton("core/session")->setPsonifyToken($token);
-				$customerId = 0;
-                                if(Mage::getSingleton('customer/session')->isLoggedIn()) {
-                                    $customerData = Mage::getSingleton('customer/session')->getCustomer();
-                                     $customerId = $customerData->getId();
-                                }
-                                
-				// Save data into the database table psonify_cart with the unique token value
-				$objPsonifyCartModel->setData(array('token' => $token, 'customer_id' => $customerId))->save();
-				
-				$message = $oldToken == NULL ? 'token is set' : 'token is updated';
-				$response = array( 'status'   => 'success' , 
-								   'message'  => $message,
-								   'oldToken' => $oldToken
+		} else {
+			// Mage::getSingleton("core/session")->unsPsonifyToken();
+			$oldToken			= Mage::getSingleton("core/session")->getPsonifyToken();
+			$objPsonifyCartModel= Mage::getModel('api/psonifycart');
+
+			if($debug){
+				Mage::getSingleton("core/session")->setPsonifyDebug($debug);
+				$response = array(
+					'status'	=> 'success' ,
+					'message'	=> "debug mode ".$debug,
 				);
+				$this->getResponse()->setBody(json_encode($response));
+			} else {
+				$response = array(
+					'status'	=> 'fail',
+					'message'	=> 'add token in parameters'
+				);
+				if($token){
+					Mage::getSingleton("core/session")->setPsonifyToken($token);
+					$customerId = 0;
+					if(Mage::getSingleton('customer/session')->isLoggedIn()) {
+						$customerData	= Mage::getSingleton('customer/session')->getCustomer();
+						$customerId		= $customerData->getId();
+					}
+
+					// Save data into the database table psonify_cart with the unique token value
+					$objPsonifyCartModel->setData(array(
+						'token'			=> $token,
+						'customer_id'	=> $customerId
+					))->save();
+
+					$message = $oldToken == NULL ? 'token is set' : 'token is updated';
+					$response = array(
+						'status'	=> 'success',
+						'message'	=> $message,
+						'oldToken'	=> $oldToken
+					);
+				}
+
+				$this->getResponse()->setBody(json_encode($response));
 			}
-			else
-			{
-				$response = array( 'status' => 'fail' , 'message' => 'add token in parameters');
-			}
-			$this->getResponse()->setBody(json_encode($response));
 		}
 	}
-	
-	public function exportProdcuts(){
-		$response = array();
-		$page = $this->getRequest()->getParam('page',1);
-		$limit = $this->getRequest()->getParam('limit',1);
+
+	public function exportProducts(){
+		$response	= array();
+		$page		= $this->getRequest()->getParam('page',1);
+		$limit		= $this->getRequest()->getParam('limit',1);
 		$collection = Mage::getResourceModel('catalog/product_collection')
 			->setStoreId(Mage::app()->getStore()->getId())
 			->addAttributeToSelect('id')
 			//->addAttributeToFilter('type_id','simple')
 			->addFieldToFilter('visibility', array(
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
-            ));
-		$response['total_products'] = count($collection);
-		$response['page'] = $page;
-		$response['limit'] = $limit;
-		$collection = Mage::getResourceModel('catalog/product_collection')
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
+		));
+		$response['total_products']	= count($collection);
+		$response['page']			= $page;
+		$response['limit']			= $limit;
+		$collection					= Mage::getResourceModel('catalog/product_collection')
 			->setStoreId(Mage::app()->getStore()->getId())
 			->addAttributeToSelect('*')
 			->addFieldToFilter('visibility', array(
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
-            ))->addAttributeToSort('name', 'ASC')
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
+			))->addAttributeToSort('name', 'ASC')
 			->setPageSize($limit)
 			->setCurPage($page);
-		
+
 		$products = array();
 		foreach($collection as $index => $product){
 			$attributes = $product->getAttributes();
 			$attrbs = array();
-			foreach ($attributes as $attribute) {    
+			foreach ($attributes as $attribute) {
 				$label = $attribute->getFrontend()->getLabel($product);
 				$label = str_replace(' ','_',strtolower(trim($label)));
 				$value = $attribute->getFrontend()->getValue($product);
-				$attrbs[$label] = $value;    
+				$attrbs[$label] = $value;
 			}
 			$categories = array();
 			$currentCatIds = $product->getCategoryIds();
 			if(!empty($currentCatIds)){
 				$categoryCollection = Mage::getResourceModel('catalog/category_collection')
-						 ->addAttributeToSelect('name')
-						 ->addAttributeToSelect('id')
-						 ->addAttributeToSelect('url')
-						 ->addAttributeToFilter('entity_id', $currentCatIds)
-						 ->addIsActiveFilter();
-				
+					->addAttributeToSelect('name')
+					->addAttributeToSelect('id')
+					->addAttributeToSelect('url')
+					->addAttributeToFilter('entity_id', $currentCatIds)
+					->addIsActiveFilter();
+
 				foreach($categoryCollection as $cat){
-				  $categories[] = array('id' => $cat->getId(), 'name' => $cat->getName() , 'cate_page_url' => $cat->getUrl());
+					$categories[] = array('id' => $cat->getId(), 'name' => $cat->getName() , 'cate_page_url' => $cat->getUrl());
 				}
 			}
 			$stock =  Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 			$products[] = array(
-				'identifier' => 'id',
-				'value' => $product->getId(),
-				'product_name' => $product->getName(),
-				'image'=> $product->getImage(),
-				'price' => $product->getPrice(),
-				'sku' => $product->getSku(),
-				'url' => $product->getProductUrl(),
-				'current_stock' => (int) $stock->getQty(),
-				'min_stock' => $stock->getMinQty(),
-				'created_at' => $product->getCreatedAt(),
-				'updated_at' => $product->getUpdatedAt(),
-				'categories' =>  $categories,
-				'attributes' => $attrbs,
-				'status' => $product->getStatus(),
-				'visibility' => $product->getVisibility(),
+				'identifier'	=> 'id',
+				'value'			=> $product->getId(),
+				'product_name'	=> $product->getName(),
+				'image'			=> $product->getImage(),
+				'price'			=> $product->getPrice(),
+				'sku'			=> $product->getSku(),
+				'url'			=> $product->getProductUrl(),
+				'current_stock'	=> (int) $stock->getQty(),
+				'min_stock'		=> $stock->getMinQty(),
+				'created_at'	=> $product->getCreatedAt(),
+				'updated_at'	=> $product->getUpdatedAt(),
+				'categories'	=> $categories,
+				'attributes'	=> $attrbs,
+				'status'		=> $product->getStatus(),
+				'visibility'	=> $product->getVisibility(),
 			);
 		}
 		$response['products'] = $products;
 		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
 		$this->getResponse()->setBody(json_encode($response));
 	}
-	
+
 	public function exportProductsCount(){
 		$collection = Mage::getResourceModel('catalog/product_collection')->setStoreId(Mage::app()->getStore()->getId())
 			->setStoreId(Mage::app()->getStore()->getId())
