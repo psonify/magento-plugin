@@ -4,14 +4,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+class Psonify_Api_Model_Psonifycart extends Mage_Core_Model_Abstract {
 
-class Psonify_Api_Model_Psonifycart extends Mage_Core_Model_Abstract
-{
-    public function _construct()
-    {
-        parent::_construct();
-        $this->_init('api/psonifycart');
-    }
+	/**
+	 * [_construct description]
+	 * @return [type] [description]
+	 */
+	public function _construct() {
+		parent::_construct();
+		$this->_init('api/psonifycart');
+	}
 }
 
 ?>
