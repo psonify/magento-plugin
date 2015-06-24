@@ -73,7 +73,7 @@ class Psonify_Api_Model_Wrapper {
 				echo "<br/><h1>Sent Params</h1><br/>";
 				Zend_Debug::dump($params );
 				echo "<br/><h1>Recieved Result</h1><br/>";
-				Zend_Debug::Dump($result);exit;
+				Zend_Debug::Dump($result);
 			}
 			curl_close($ch);
 			return json_decode($result);
