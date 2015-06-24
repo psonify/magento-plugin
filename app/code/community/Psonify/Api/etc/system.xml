@@ -1,61 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-    <tabs>
-        <psonify translate="label" module="api">
-            <label>Psonify Extension</label>
-            <sort_order>100</sort_order>
-        </psonify>
-    </tabs>
-    <sections>
-        <psonify translate="label" module="api">
-            <label>General</label>
-            <tab>psonify</tab>
-            <sort_order>1000</sort_order>
-            <show_in_default>1</show_in_default>
-            <show_in_website>1</show_in_website>
-            <show_in_store>1</show_in_store>
- 
-            <groups>
-                <psonify_group translate="label" module="api">
-                    <label>General</label>
-                    <frontend_type>text</frontend_type>
-                    <sort_order>1000</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
- 
-                    <fields>
-                        <psonify_msg_input translate="label">
-                            <label>Message: </label>
-                            <comment>Please enter the message to show customers who are still on the site when their basket is recovered.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>20</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </psonify_msg_input>
-                        <psonify_modal_title translate="label">
-                            <label>Modal title: </label>
-                            <comment>Modal title.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </psonify_modal_title>
-                        <psonify_cron_email translate="label">
-                            <label>From Email: </label>
-                            <comment>From Email to send to customer with abandoned cart details.</comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>30</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </psonify_cron_email>
-                        
-                    </fields>
-                </psonify_group>
-            </groups>
-        </psonify>
-    </sections>
+	<tabs>
+		<psonify translate="label" module="api">
+			<label>Psonify Extension</label>
+			<sort_order>100</sort_order>
+		</psonify>
+	</tabs>
+	<sections>
+		<psonify translate="label" module="api">
+			<label>General</label>
+			<tab>psonify</tab>
+			<sort_order>1000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+
+			<groups>
+				<psonify_group translate="label" module="api">
+					<label>General</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>1000</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+
+					<fields>
+						<psonify_msg_input translate="label">
+							<label>Message: </label>
+							<comment>Please enter the message to show customers who are still on the site when their basket is recovered.</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>20</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</psonify_msg_input>
+						<psonify_modal_title translate="label">
+							<label>Modal title: </label>
+							<comment>Modal title.</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>30</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</psonify_modal_title>
+						<psonify_cron_email translate="label">
+							<label>From Email: </label>
+							<comment>From Email to send to customer with abandoned cart details.</comment>
+							<frontend_type>text</frontend_type>
+							<sort_order>30</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</psonify_cron_email>
+					</fields>
+				</psonify_group>
+			</groups>
+		</psonify>
+	</sections>
 </config>
