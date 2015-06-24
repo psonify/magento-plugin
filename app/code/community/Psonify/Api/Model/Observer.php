@@ -127,8 +127,8 @@ class Psonify_Api_Model_Observer
 		
 		
 		//var_dump($data);exit;
-		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		$response = $apiWrapper->callApi('cart/update',$data);
+		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		//$response = $apiWrapper->callApi('cart/update',$data);
 	}
     
 	
@@ -306,9 +306,6 @@ class Psonify_Api_Model_Observer
 		$data = array(
 			"data" => array(
 				'address' => array(
-					'firstname'   => $address['firstname'],
-					'lastname'    => $address['lastname'],
-					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
@@ -338,9 +335,6 @@ class Psonify_Api_Model_Observer
 		$data = array(
 			"data" => array (
 				'address' => array(
-					'firstname'   => $address['firstname'],
-					'lastname'    => $address['lastname'],
-					'email'       => $address['email'],
 					'line1'       => $address['street'][0],
 					'line2'       => $address['street'][1],
 					'line3'       => '',
@@ -481,7 +475,7 @@ class Psonify_Api_Model_Observer
 				'value'  => $product->getId(),
 			),
 			'product_name' => $product->getName(),
-			'image'=> $product->getImage(),
+			'image'=> (string)Mage::helper('catalog/image')->init($product, 'image')->resize(200),
 			'price' => $product->getPrice(),
 			'sku' => $product->getSku(),
 			'url' => $product->getProductUrl(),
@@ -506,7 +500,7 @@ class Psonify_Api_Model_Observer
 	
 	public function getApiUrl(){
 		// needs to fetched from admin settings in future
-		return "http://api.psonify.com";
+		return "http://api.psonifydev.com";
 		
 	}
         
