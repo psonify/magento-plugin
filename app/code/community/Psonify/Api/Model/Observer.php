@@ -89,8 +89,8 @@ class Psonify_Api_Model_Observer {
 
 		//echo '<pre>';print_r($products);exit;
 		//var_dump($data);exit;
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/update',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/update',$data);
 	}
 
 	/**
@@ -158,8 +158,8 @@ class Psonify_Api_Model_Observer {
 			$objPsonifyCartItemModel->setId($objCartItemData[0]['id'])->delete();
 		}
 
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/remove',$data);
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/remove',$data);
 	}
 
 	/**
