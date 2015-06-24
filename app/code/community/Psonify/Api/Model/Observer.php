@@ -179,8 +179,8 @@ class Psonify_Api_Model_Observer
 			}
 		}
 		
-		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		$response = $apiWrapper->callApi('cart/add', $data );
+		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		//$response = $apiWrapper->callApi('cart/add', $data );
 	}
 	
 	/**
@@ -211,8 +211,8 @@ class Psonify_Api_Model_Observer
 			
 		}
 		
-		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		$response = $apiWrapper->callApi('cart/remove',$data);
+		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		//$response = $apiWrapper->callApi('cart/remove',$data);
 	}
 	
 	/**
@@ -475,7 +475,7 @@ class Psonify_Api_Model_Observer
 				'value'  => $product->getId(),
 			),
 			'product_name' => $product->getName(),
-			'image'=> (string)Mage::helper('catalog/image')->init($product, 'image')->resize(200),
+			'image'=> $product->getImage(),
 			'price' => $product->getPrice(),
 			'sku' => $product->getSku(),
 			'url' => $product->getProductUrl(),

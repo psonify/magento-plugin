@@ -43,7 +43,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action
 		else
 		{
 			
-			if($token != NULL && $oldToken == NULL){
+			if($token != NULL){
 				Mage::getSingleton("core/session")->setPsonifyToken($token);
 				$customerId = 0;
                                 if(Mage::getSingleton('customer/session')->isLoggedIn()) {

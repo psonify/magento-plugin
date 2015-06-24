@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<layout>
+
+    
+    <psonify_adminhtml_psonify_index>
+        <reference name="content">
+            <block type="adminhtml/template" name="psonify" template="psonify/template.phtml"/>
+        </reference>
+    </psonify_adminhtml_psonify_index>
+</layout>

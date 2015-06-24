@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+    <default></default>
+    <checkout_cart_index>
+        <reference name="head">
+            <action method="addCss"><stylesheet>psonify/css/bootstrap.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>psonify/css/bootstrap-theme.min.css</stylesheet></action>
+            <action method="addCss"><stylesheet>psonify/css/bootstrap-modal.css</stylesheet></action>
+            <action method="addCss"><stylesheet>psonify/css/bootstrap-table.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><name>psonify/js/bootstrap.min.js</name></action>
+        </reference>
+        <reference name="checkout.cart">
+            <action method="setTemplate"><template>psonify/cart.phtml</template></action>
+        </reference>
+    </checkout_cart_index>
+</layout>
