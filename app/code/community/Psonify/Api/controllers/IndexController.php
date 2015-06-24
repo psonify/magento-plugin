@@ -5,6 +5,10 @@
  */
 class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 
+	/**
+	 * [indexAction description]
+	 * @return [type] [description]
+	 */
 	public function indexAction() {
 
 		// change this to 'prod' on production
@@ -77,6 +81,10 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 		}
 	}
 
+	/**
+	 * [exportProducts description]
+	 * @return [type] [description]
+	 */
 	public function exportProducts(){
 		$response	= array();
 		$page		= $this->getRequest()->getParam('page',1);
@@ -142,7 +150,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 				'categories'	=> $categories,
 				'attributes'	=> $attrbs,
 				'status'		=> $product->getStatus(),
-				'visibility'	=> $product->getVisibility(),
+				'visibility'	=> $product->getVisibility()
 			);
 		}
 		$response['products'] = $products;
@@ -150,189 +158,198 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 		$this->getResponse()->setBody(json_encode($response));
 	}
 
-	public function exportProductsCount(){
+	/**
+	 * [exportProductsCount description]
+	 * @return [type] [description]
+	 */
+	public function exportProductsCount() {
 		$collection = Mage::getResourceModel('catalog/product_collection')->setStoreId(Mage::app()->getStore()->getId())
 			->setStoreId(Mage::app()->getStore()->getId())
 			->addAttributeToSelect('id')
 			//->addAttributeToFilter('type_id','simple')
 			->addFieldToFilter('visibility', array(
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
-                               Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
-            ));
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
+				Mage_Catalog_Model_Product_Visibility::VISIBILITY_IN_CATALOG
+		));
 		$response['products_count'] = count($collection);
 		$this->getResponse()->setBody(json_encode($response));
 		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
 	}
-	
-	
-	public function restoreCartAction(){
-	
+
+	/**
+	 * [restoreCartAction description]
+	 * @return [type] [description]
+	 */
+	public function restoreCartAction() {
+
 		$arrRequest = $this->getRequest()->getParams();
-			
-		if(!isset($arrRequest['token'])){
+
+		if(!isset($arrRequest['token'])) {
 			return false;
-		}
-                $cartItems = Mage::getModel("checkout/session")->getQuote();
-                
-                $items = $cartItems->getAllVisibleItems();
+		} else {
+			$cartItems = Mage::getModel("checkout/session")->getQuote();
 
-                if(count($items)){
-                    $this->_redirect('checkout/cart/index/flag/'.$arrRequest['token']);
-                    return false;
-                }
-                
-                
-                
-                $configFields = Mage::getStoreConfig('psonify/psonify_group');
+			$items = $cartItems->getAllVisibleItems();
 
-                Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+			if(count($items)) {
+				$this->_redirect('checkout/cart/index/flag/'.$arrRequest['token']);
+				return false;
+			} else {
+				$configFields = Mage::getStoreConfig('psonify/psonify_group');
 
-		Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
-		
-		
-		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest['token']);
-		$arrPsonifyCartItem->getSelect()->join(
-			array('cart_item' => 'psonify_cart'),
-			'cart_item.id = main_table.psonify_cart_id',
-			'cart_item.token'
-		)
-                ->where("cart_item.token = '".$arrRequest['token']."'");
-		
-		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
-		
-		foreach($arrPsonifyCartItemData as $row){
-		
-			$objCartModel = Mage::getModel('checkout/cart');
-			$objCartModel->init();
-			$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
-			
-			if($productCollection->getTypeId() == 'simple'){
-				$_product = array( 'product_id' => $row['cart_item_id'], 'qty' => $row['qty']);
-			}elseif($productCollection->getTypeId() == 'configurable'){
-                            $serialize = unserialize($row['serialize_string']);
-				$_product = array( 
-									'product_id' => $row['cart_item_id'],
-									'qty' => $row['qty'],
-									'super_attribute' => $serialize['super_attribute']//array( $optionId => $optionValue)
-								);
+				Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+
+				Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
+
+				$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
+				//$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest['token']);
+				$arrPsonifyCartItem->getSelect()->join(
+					array('cart_item' => 'psonify_cart'),
+					'cart_item.id = main_table.psonify_cart_id',
+					'cart_item.token'
+				)
+				->where("cart_item.token = '".$arrRequest['token']."'");
+
+				$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
+
+				foreach($arrPsonifyCartItemData as $row) {
+					$objCartModel = Mage::getModel('checkout/cart');
+					$objCartModel->init();
+					$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
+
+					if($productCollection->getTypeId() == 'simple') {
+						$_product = array( 'product_id' => $row['cart_item_id'], 'qty' => $row['qty']);
+					} else if($productCollection->getTypeId() == 'configurable') {
+						$serialize = unserialize($row['serialize_string']);
+						$_product = array(
+							'product_id'		=> $row['cart_item_id'],
+							'qty'				=> $row['qty'],
+							'super_attribute'	=> $serialize['super_attribute']//array( $optionId => $optionValue)
+						);
+					}
+					$objCartModel->addProduct($productCollection, $_product);
+					$objCartModel->save();
+				}
+				$this->_redirect("checkout/cart");
 			}
-			$objCartModel->addProduct($productCollection, $_product);		
-			$objCartModel->save(); 
 		}
-		
-		
-		$this->_redirect("checkout/cart");
-	
+
 	}
 
-	public function productsExportAction(){
-		$token = $this->getRequest()->getParam('token');
-		$page = $this->getRequest()->getParam('page');
-		$limit = $this->getRequest()->getParam('limit');
-		$collection = Mage::getResourceModel('catalog/product_collection')->setStoreId($this->getStoreId());
-		echo count($collection);exit;
-		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);	
+	/**
+	 * [productsExportAction description]
+	 * @return [type] [description]
+	 */
+	public function productsExportAction() {
+		$token		= $this->getRequest()->getParam('token');
+		$page		= $this->getRequest()->getParam('page');
+		$limit		= $this->getRequest()->getParam('limit');
+		$collection	= Mage::getResourceModel('catalog/product_collection')->setStoreId($this->getStoreId());
+		#echo count($collection);exit;
+		$this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
 	}
-        
-        public function assigncartAction(){
-                $arrRequest = $this->getRequest()->getParams();
-			
+
+	/**
+	 * [assigncartAction description]
+	 * @return [type] [description]
+	 */
+	public function assigncartAction() {
+		$arrRequest = $this->getRequest()->getParams();
 		if(!isset($arrRequest['token'])){
 			return false;
-		}
-               
-                
-                
-                
-                $configFields = Mage::getStoreConfig('psonify/psonify_group');
+		} else {
+			$configFields = Mage::getStoreConfig('psonify/psonify_group');
 
-                Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+			Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
+			Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
 
-		Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
-		
-		
-		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-		$arrPsonifyCartItem->getSelect()->join(
-			array('cart_item' => 'psonify_cart'),
-			'cart_item.id = main_table.psonify_cart_id',
-			'cart_item.token'
-		)
-                ->where("cart_item.token = '".$arrRequest['token']."'");
-		
-		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
-		
-		foreach($arrPsonifyCartItemData as $row){
-                    //echo array_search($row['cart_item_id'], $arrRequest['abandonedItem']);
-                    
-                    if(array_search($row['cart_item_id'], $arrRequest['abandonedItem']) >= 0){
-                        
-			$objCartModel = Mage::getModel('checkout/cart');
-			$objCartModel->init();
-			$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
-			
-			if($productCollection->getTypeId() == 'simple'){
-				$_product = array( 'product_id' => $row['cart_item_id'], 'qty' => $row['qty']);
-			}elseif($productCollection->getTypeId() == 'configurable'){
-                            $serialize = unserialize($row['serialize_string']);
-				$_product = array( 
-									'product_id' => $row['cart_item_id'],
-									'qty' => $row['qty'],
-									'super_attribute' => $serialize['super_attribute']//array( $optionId => $optionValue)
-								);
+			$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
+			$arrPsonifyCartItem->getSelect()->join(
+				array('cart_item' => 'psonify_cart'),
+				'cart_item.id = main_table.psonify_cart_id',
+				'cart_item.token'
+			)
+			->where("cart_item.token = '".$arrRequest['token']."'");
+
+			$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
+
+			foreach($arrPsonifyCartItemData as $row) {
+				//echo array_search($row['cart_item_id'], $arrRequest['abandonedItem']);
+				if(array_search($row['cart_item_id'], $arrRequest['abandonedItem']) >= 0) {
+					$objCartModel = Mage::getModel('checkout/cart');
+					$objCartModel->init();
+					$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
+
+					if($productCollection->getTypeId() == 'simple') {
+						$_product = array(
+							'product_id'	=> $row['cart_item_id'],
+							'qty'			=> $row['qty']
+						);
+					} else if($productCollection->getTypeId() == 'configurable') {
+						$serialize	= unserialize($row['serialize_string']);
+						$_product	= array(
+							'product_id'		=> $row['cart_item_id'],
+							'qty'				=> $row['qty'],
+							'super_attribute'	=> $serialize['super_attribute']//array( $optionId => $optionValue)
+						);
+					}
+					$objCartModel->addProduct($productCollection, $_product);
+					$objCartModel->save();
+				}
 			}
-			$objCartModel->addProduct($productCollection, $_product);		
-			$objCartModel->save(); 
-                    }
+			$this->_redirect("checkout/cart");
 		}
-		$this->_redirect("checkout/cart");
-        }
-        
-        public function cartAction(){
-            $arrRequest = $this->getRequest()->getParam('token');
-            
-            if(!$arrRequest){
-                return false;
-            }
-            
-            $arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest);
+	}
+
+	/**
+	 * [cartAction description]
+	 * @return [type] [description]
+	 */
+	public function cartAction(){
+		$arrRequest = $this->getRequest()->getParam('token');
+		if(!$arrRequest){
+			return false;
+		}
+		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
+		//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest);
 		$arrPsonifyCartItem->getSelect()->join(
 			array('cart_item' => 'psonify_cart'),
 			'cart_item.id = main_table.psonify_cart_id',
 			'cart_item.token'
 		)->where("cart_item.token = '".$arrRequest."'");
-		
+
 		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
 		$html = '<div class="fixed-table-container"><table id="table-style" data-height="400" data-row-style="rowStyle" class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th data-field="name" class="col-md-6">
-                                    <div class="th-inner">Product Name</div>
-                                    <div class="fht-cell"></div>
-                                </th>
-                                <th data-field="price" class="col-md-4">
-                                    <div class="th-inner">Qty</div>
-                                    <div class="fht-cell"></div>
-                                </th>
-                                <th data-field="price" class="col-md-4">
-                                    <div class="th-inner"><input type="checkbox" id="selectAll"/></div>
-                                    <div class="fht-cell"></div>
-                                </th>
-                            </tr>
-                            </thead><tbody>';
-		foreach($arrPsonifyCartItemData as $row){
-                    $serialize = unserialize($row['serialize_string']);
-                    $html .= '
-                                <tr>
-                                    <td> <a href="'.$serialize['url'].'">'.$serialize['attributes']['name'].'</a> </td>
-                                    <td> '.$serialize['qty'].' </td>
-                                    <td> <input type="checkbox" name="abandonedItem[]" value="'.$serialize['identifier']['value'].'" id="abandonedItem'.$serialize['identifier']['value'].'"/> </td>
-                                </tr>
-                            ';
+			<thead>
+			<tr>
+				<th data-field="name" class="col-md-6">
+					<div class="th-inner">Product Name</div>
+					<div class="fht-cell"></div>
+				</th>
+				<th data-field="price" class="col-md-4">
+					<div class="th-inner">Qty</div>
+					<div class="fht-cell"></div>
+				</th>
+				<th data-field="price" class="col-md-4">
+					<div class="th-inner"><input type="checkbox" id="selectAll"/></div>
+					<div class="fht-cell"></div>
+				</th>
+			</tr>
+			</thead><tbody>';
+		foreach($arrPsonifyCartItemData as $row) {
+			$serialize = unserialize($row['serialize_string']);
+			$html .= '
+				<tr>
+					<td> <a href="'.$serialize['url'].'">'.$serialize['attributes']['name'].'</a> </td>
+					<td> '.$serialize['qty'].' </td>
+					<td> <input type="checkbox" name="abandonedItem[]" value="'.$serialize['identifier']['value'].'" id="abandonedItem'.$serialize['identifier']['value'].'"/> </td>
+				</tr>
+			';
 		}
-            $html .= '</tbody></table></div>';
-            echo $html;
-            return ;
-        }
+		$html .= '</tbody></table></div>';
+		echo $html;
+		return ;
+	}
 }
+
+?>
