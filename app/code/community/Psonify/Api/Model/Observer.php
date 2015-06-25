@@ -423,7 +423,7 @@ class Psonify_Api_Model_Observer {
 				'value'		=> $product->getId(),
 			),
 			'product_name'	=> $product->getName(),
-			'image'			=> $product->getImage(),
+			'image'			=> Mage::getModel('catalog/product_media_config')->getMediaUrl( $product->getSmallImage()),
 			'price'			=> $product->getPrice(),
 			'sku'			=> $product->getSku(),
 			'url'			=> $product->getProductUrl(),
