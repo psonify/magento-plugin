@@ -8,11 +8,9 @@
 
 
 $installer = $this;
-  
 $installer->startSetup();
-  
 $installer->run("
-  
+
 DROP TABLE IF EXISTS {$this->getTable('psonify_cart')};
 CREATE TABLE `{$this->getTable('psonify_cart')}` (
 	`id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -23,7 +21,7 @@ CREATE TABLE `{$this->getTable('psonify_cart')}` (
 	`token` VARCHAR(50) NOT NULL,
 	PRIMARY KEY (`id`)
 )
-COLLATE='UTF8'
+COLLATE='utf8_general_ci'
 ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS {$this->getTable('psonify_cart_item')};
@@ -35,9 +33,7 @@ CREATE TABLE `{$this->getTable('psonify_cart_item')}` (
 	PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
+");
 
-
-    ");
-  
 $installer->endSetup();
 ?>
