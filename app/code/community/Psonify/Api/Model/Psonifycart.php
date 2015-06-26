@@ -7,8 +7,8 @@
 class Psonify_Api_Model_Psonifycart extends Mage_Core_Model_Abstract {
 
 	/**
-	 * [_construct description]
-	 * @return [type] [description]
+	 * model construct function.
+	 * @return null
 	 */
 	public function _construct() {
 		parent::_construct();
