@@ -7,10 +7,10 @@
 class Psonify_Api_Adminhtml_PsonifyController extends Mage_Adminhtml_Controller_Action {
 
 	/**
-	 * [indexAction description]
-	 * @return [type] [description]
+	 * admin index controller to render the phtml view.
 	 */
 	public function indexAction() {
+		//load layout set menu of and set title and render.
 		$this->loadLayout()
 			->_setActiveMenu('psonify')
 			->_title($this->__('Index Action'));
