@@ -68,16 +68,25 @@ class Psonify_Api_Model_Observer {
 	* @retun NULL
 	*/
 	public function hookToUpdateCartAfter($observer) {
+		
+		//retrive porduct from the cart.
 		$products = $this->getAllProductsFromCart();
-		// echo '<pre>';print_r($products);exit;
+		
+		//set array of product object.
 		$data = array(
 			'data'	=> array(
 				'products' => $products,
 			),
 			'token'	=> $this->getToken(),
 		);
+		
+		//get psonify_cart table data.
 		$arrPsonifyCartData = $this->getPsonifyCartData();
+		
+		//set psonify_cart_item model.
 		$objPsonifyCartItemModel = Mage::getModel('api/psonifycartitem');
+		
+		//if data exsist then save item in database and send to psonify server about new item insert in cart.
 		if($arrPsonifyCartData) {
 			$objPsonifyCartItemModelData	= $this->getPsonifyCartItemData($arrPsonifyCartData[0]['id'], $products[0]['identifier']['value']);
 			if($objPsonifyCartItemModelData) {
@@ -86,9 +95,8 @@ class Psonify_Api_Model_Observer {
 					->save();
 			}
 		}
-
-		//echo '<pre>';print_r($products);exit;
-		//var_dump($data);exit;
+		
+		//psonify server API call setup.
 		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
 		$response = $apiWrapper->callApi('cart/update',$data);
 	}
@@ -142,7 +150,11 @@ class Psonify_Api_Model_Observer {
 	* @retun NULL
 	*/
 	public function hookToRemoveFromCart($observer) {
+		
+		//retrive product from the quote.
 		$product =  $this->retriveDataFromProduct($observer->getQuoteItem()->getProduct());
+		
+		//set product array.
 		$data = array(
 			 'data'	=> array(
 				'product' => $product,
@@ -150,14 +162,17 @@ class Psonify_Api_Model_Observer {
 			'token'	=> $this->getToken(),
 		);
 
-		$objPsonifyCartItemModel= Mage::getModel('api/psonifycartitem');
+		//set psonify_cart_item model.
+		$objPsonifyCartItemModel	= Mage::getModel('api/psonifycartitem');
 		$objPsonifyCartData		= $this->getPsonifyCartData();
 		$objCartItemData		= $this->getPsonifyCartItemData($objPsonifyCartData[0]['id'], $product['identifier']['value']);
 
+		//if product exsist then delete from the table.
 		if($objCartItemData) {
 			$objPsonifyCartItemModel->setId($objCartItemData[0]['id'])->delete();
 		}
 
+		// psonify server API call setup.
 		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
 		$response = $apiWrapper->callApi('cart/remove',$data);
 	}
