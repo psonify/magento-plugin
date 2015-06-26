@@ -177,32 +177,44 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
-	 * [restoreCartAction description]
-	 * @return [type] [description]
+	 * Function to restore abandoned cart based on token provide..
+	 * @return boolean
 	 */
 	public function restoreCartAction() {
 
+		// get query string data in array.
 		$arrRequest = $this->getRequest()->getParams();
-
+		
+		// If token is not set return to redirect the user to home.
 		if(!isset($arrRequest['token'])) {
 			return false;
 		} else {
+			
+			//get cart items from cart session.
 			$cartItems = Mage::getModel("checkout/session")->getQuote();
 
+			//get all visible items from the cart session model.
 			$items = $cartItems->getAllVisibleItems();
 
+			//if items there set a flag in query string and send back the user to the cart page of popup the abandoned cart popup with items.
 			if(count($items)) {
 				$this->_redirect('checkout/cart/index/flag/'.$arrRequest['token']);
 				return false;
 			} else {
+				
+				//get system config data.
 				$configFields = Mage::getStoreConfig('psonify/psonify_group');
 
+				//set config message define in admin system configuration.
 				Mage::getSingleton('core/session')->addNotice($configField['psonify_msg_input']);
 
+				//set psonify token from query string.
 				Mage::getSingleton("core/session")->setPsonifyToken($arrRequest['token']);
 
-				$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-				//$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest['token']);
+				//get collection from table psonify_cart_item.
+				$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();
+				
+				//set join to psonify_cart table on psonify_cart.id = psonify_cart_item.psonify_cart_id
 				$arrPsonifyCartItem->getSelect()->join(
 					array('cart_item' => 'psonify_cart'),
 					'cart_item.id = main_table.psonify_cart_id',
@@ -210,16 +222,23 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 				)
 				->where("cart_item.token = '".$arrRequest['token']."'");
 
+				//get data from the collection.
 				$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
 
 				foreach($arrPsonifyCartItemData as $row) {
+					
+					//set cart model and initialize.
 					$objCartModel = Mage::getModel('checkout/cart');
 					$objCartModel->init();
+					
+					//load product of each itarate item.
 					$productCollection = Mage::getModel('catalog/product')->load($row['cart_item_id']);
 
+
+					//if product is of type simple
 					if($productCollection->getTypeId() == 'simple') {
 						$_product = array( 'product_id' => $row['cart_item_id'], 'qty' => $row['qty']);
-					} else if($productCollection->getTypeId() == 'configurable') {
+					} else if($productCollection->getTypeId() == 'configurable') { // or if product is of type configurable.
 						$serialize = unserialize($row['serialize_string']);
 						$_product = array(
 							'product_id'		=> $row['cart_item_id'],
@@ -227,10 +246,15 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 							'super_attribute'	=> $serialize['super_attribute']//array( $optionId => $optionValue)
 						);
 					}
+					
+					//add product option into the model and save.
 					$objCartModel->addProduct($productCollection, $_product);
 					$objCartModel->save();
 				}
+				
+				//redirect the user to cart page.
 				$this->_redirect("checkout/cart");
+				return true;
 			}
 		}
 
@@ -274,7 +298,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 			$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
 
 			foreach($arrPsonifyCartItemData as $row) {
-				//echo array_search($row['cart_item_id'], $arrRequest['abandonedItem']);
+				
 				if(array_search($row['cart_item_id'], $arrRequest['abandonedItem']) >= 0) {
 					$objCartModel = Mage::getModel('checkout/cart');
 					$objCartModel->init();
@@ -302,23 +326,33 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
-	 * [cartAction description]
-	 * @return [type] [description]
+	 * Function to echo the template html of a particular abandoned cart based on the token passed in query string.
+	 * @return string
 	 */
 	public function cartAction(){
+		
+		//set query string variable.
 		$arrRequest = $this->getRequest()->getParam('token');
+		
+		//if token is not set return.
 		if(!$arrRequest){
 			return false;
 		}
-		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();//->addFieldToFilter('token', $arrRequest['token']);
-		//		$arrPsonifyCartItem->addFieldToFilter('token', $arrRequest);
+		
+		// set collection of table psonify_cart_item.
+		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();
+		
+		//set join with psonify_cart table.
 		$arrPsonifyCartItem->getSelect()->join(
 			array('cart_item' => 'psonify_cart'),
 			'cart_item.id = main_table.psonify_cart_id',
 			'cart_item.token'
 		)->where("cart_item.token = '".$arrRequest."'");
 
+		//get data from the model.
 		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
+		
+		//set table header.
 		$html = '<div class="fixed-table-container"><table id="table-style" data-height="400" data-row-style="rowStyle" class="table table-hover">
 			<thead>
 			<tr>
@@ -336,6 +370,8 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 				</th>
 			</tr>
 			</thead><tbody>';
+			
+		//set table body part.
 		foreach($arrPsonifyCartItemData as $row) {
 			$serialize = unserialize($row['serialize_string']);
 			$html .= '
