@@ -470,7 +470,7 @@ class Psonify_Api_Model_Observer {
 	 * @return [type] [description]
 	 */
 	public function getApiUrl(){
-		// needs to fetched from admin settings in future
+		// needs to be fetched from admin settings in the future
 		return "http://api.psonifydev.com";
 
 	}

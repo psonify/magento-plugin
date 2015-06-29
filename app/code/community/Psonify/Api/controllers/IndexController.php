@@ -177,26 +177,26 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
-	 * Function to restore abandoned cart based on token provide..
+	 * Function to restore abandoned cart based on token provided.
 	 * @return boolean
 	 */
 	public function restoreCartAction() {
 
-		// get query string data in array.
+		// get query string data as an array.
 		$arrRequest = $this->getRequest()->getParams();
-		
+
 		// If token is not set return to redirect the user to home.
 		if(!isset($arrRequest['token'])) {
 			return false;
 		} else {
-			
+
 			//get cart items from cart session.
 			$cartItems = Mage::getModel("checkout/session")->getQuote();
 
 			//get all visible items from the cart session model.
 			$items = $cartItems->getAllVisibleItems();
 
-			//if items there set a flag in query string and send back the user to the cart page of popup the abandoned cart popup with items.
+			//if items there set a flag in query string and send the user back to the cart page or popup the abandoned cart popup with items.
 			if(count($items)) {
 				$this->_redirect('checkout/cart/index/flag/'.$arrRequest['token']);
 				return false;
@@ -227,7 +227,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 
 				foreach($arrPsonifyCartItemData as $row) {
 					
-					//set cart model and initialize.
+					//set cart model and initialise.
 					$objCartModel = Mage::getModel('checkout/cart');
 					$objCartModel->init();
 					
@@ -341,7 +341,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 		
 		// set collection of table psonify_cart_item.
 		$arrPsonifyCartItem = Mage::getModel('api/psonifycartitem')->getCollection();
-		
+
 		//set join with psonify_cart table.
 		$arrPsonifyCartItem->getSelect()->join(
 			array('cart_item' => 'psonify_cart'),
@@ -351,7 +351,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 
 		//get data from the model.
 		$arrPsonifyCartItemData = $arrPsonifyCartItem->getData();
-		
+
 		//set table header.
 		$html = '<div class="fixed-table-container"><table id="table-style" data-height="400" data-row-style="rowStyle" class="table table-hover">
 			<thead>
@@ -370,7 +370,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 				</th>
 			</tr>
 			</thead><tbody>';
-			
+
 		//set table body part.
 		foreach($arrPsonifyCartItemData as $row) {
 			$serialize = unserialize($row['serialize_string']);
