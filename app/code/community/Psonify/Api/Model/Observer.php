@@ -140,8 +140,8 @@ class Psonify_Api_Model_Observer {
 			}
 		}
 
-		//$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
-		//$response = $apiWrapper->callApi('cart/add', $data );
+		$apiWrapper = new Psonify_Api_Model_Wrapper($this->getApiUrl());
+		$response = $apiWrapper->callApi('cart/add', $data );
 	}
 
 	/**

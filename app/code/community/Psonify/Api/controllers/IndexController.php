@@ -6,8 +6,9 @@
 class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 
 	/**
-	 * [indexAction description]
-	 * @return [type] [description]
+	 * indexAction
+	 * Sets the token in session and exports the products to psonify
+	 * @return NULL
 	 */
 	public function indexAction() {
 
@@ -82,8 +83,9 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
-	 * [exportProducts description]
-	 * @return [type] [description]
+	 * exportProducts
+	 * Exports the products as json 
+	 * @return NULL
 	 */
 	public function exportProducts(){
 		$response	= array();
@@ -159,6 +161,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
+	 * exportProductsCount
 	 * Exports the number of products as json
 	 * @return NULL
 	 */
@@ -177,6 +180,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
+	 * restoreCartAction
 	 * Function to restore abandoned cart based on token provided.
 	 * @return boolean
 	 */
