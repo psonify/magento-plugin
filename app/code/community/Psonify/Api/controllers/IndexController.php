@@ -139,7 +139,7 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 				'identifier'	=> 'id',
 				'value'			=> $product->getId(),
 				'product_name'	=> $product->getName(),
-				'image'			=> $product->getImage(),
+				'image'			=> Mage::getModel('catalog/product_media_config')->getMediaUrl( $product->getSmallImage()),
 				'price'			=> $product->getPrice(),
 				'sku'			=> $product->getSku(),
 				'url'			=> $product->getProductUrl(),
@@ -159,8 +159,8 @@ class Psonify_Api_IndexController extends Mage_Core_Controller_Front_Action {
 	}
 
 	/**
-	 * [exportProductsCount description]
-	 * @return [type] [description]
+	 * Exports the number of products as json
+	 * @return NULL
 	 */
 	public function exportProductsCount() {
 		$collection = Mage::getResourceModel('catalog/product_collection')->setStoreId(Mage::app()->getStore()->getId())
